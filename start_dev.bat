@@ -1,14 +1,14 @@
 @echo off
-echo Starting FastAPI Development Server...
+echo Khoi dong FastAPI Development Server...
 echo.
-echo Virtual environment activated
+echo Virtual environment da kich hoat
 echo.
 call .\venv\Scripts\activate.bat
 echo.
-echo Installing/updating dependencies...
+echo Cai dat/cap nhat dependencies...
 pip install -r requirements.txt
 echo.
-echo Starting server on http://127.0.0.1:8000
-echo Press Ctrl+C to stop the server
+echo Khoi dong server tai http://127.0.0.1:8000
+echo Nhan Ctrl+C de dung server
 echo.
 uvicorn main:app --reload --host 127.0.0.1 --port 8000

@@ -31,16 +31,16 @@ Server sẽ chạy tại: http://127.0.0.1:8000
 
 ## API Endpoints
 
-- `GET /` - Health check và welcome message
-- `GET /health` - Health check endpoint
+- `GET /` - Kiểm tra sức khỏe và thông điệp chào mừng
+- `GET /health` - Endpoint kiểm tra sức khỏe
 
 ### Ví dụ sử dụng API:
 
 ```bash
-# Health check và welcome message
+# Kiểm tra sức khỏe và thông điệp chào mừng
 curl http://127.0.0.1:8000/
 
-# Health check endpoint
+# Endpoint kiểm tra sức khỏe
 curl http://127.0.0.1:8000/health
 ```
 
@@ -56,7 +56,7 @@ heroku login
 
 ### 3. Tạo ứng dụng Heroku:
 ```bash
-heroku create your-app-name
+heroku create ten-ung-dung-cua-ban
 ```
 
 ### 4. Set buildpack Python:
@@ -91,20 +91,20 @@ heroku logs --tail
 
 Để thêm environment variables trên Heroku:
 ```bash
-heroku config:set VARIABLE_NAME=value
+heroku config:set TEN_BIEN=gia_tri
 ```
 
 ## Cấu trúc dự án
 
 ```
 pharmacy-ai/
-├── main.py              # FastAPI application
-├── requirements.txt     # Python dependencies
-├── Procfile            # Heroku process file
-├── runtime.txt         # Python version
-├── start_dev.bat       # Development server script
-├── test_server.py      # Server testing script
-├── .gitignore          # Git ignore file
+├── main.py              # Ứng dụng FastAPI
+├── requirements.txt     # Dependencies Python
+├── Procfile            # File quy trình Heroku
+├── runtime.txt         # Phiên bản Python
+├── start_dev.bat       # Script server phát triển
+├── test_server.py      # Script kiểm tra server
+├── .gitignore          # File git ignore
 └── README.md           # Tài liệu này
 ```
 
@@ -125,7 +125,7 @@ pharmacy-ai/
 2. **Port Error**: Đảm bảo port 8000 không bị sử dụng
 3. **Heroku Deploy Error**: Kiểm tra logs bằng `heroku logs --tail`
 
-### Kiểm tra health:
+### Kiểm tra sức khỏe:
 ```bash
-curl https://your-app-name.herokuapp.com/health
+curl https://ten-ung-dung-cua-ban.herokuapp.com/health
 ```

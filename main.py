@@ -4,7 +4,7 @@ import os
 
 app = FastAPI(
     title="Pharmacy AI Backend",
-    description="A simple FastAPI backend for pharmacy AI application",
+    description="Backend đơn giản sử dụng FastAPI cho ứng dụng AI dược phẩm",
     version="1.0.0",
 )
 
@@ -20,14 +20,14 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    """Health check endpoint"""
-    return {"message": "Welcome to Pharmacy AI Backend", "status": "running"}
+    """Endpoint kiểm tra sức khỏe"""
+    return {"message": "Chào mừng đến với Pharmacy AI Backend", "status": "đang chạy"}
 
 
 @app.get("/health")
 async def health_check():
-    """Health check endpoint"""
-    return {"status": "healthy", "service": "pharmacy-ai-backend"}
+    """Endpoint kiểm tra sức khỏe"""
+    return {"status": "khỏe mạnh", "service": "pharmacy-ai-backend"}
 
 
 if __name__ == "__main__":

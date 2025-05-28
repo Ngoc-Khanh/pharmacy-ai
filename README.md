@@ -1,57 +1,57 @@
 # Pharmacy AI Backend
 
-A simple FastAPI backend for pharmacy AI application with Heroku deployment.
+Backend đơn giản sử dụng FastAPI cho ứng dụng AI dược phẩm với khả năng triển khai Heroku.
 
-## Features
+## Tính năng
 
-- FastAPI web framework
-- CORS enabled for frontend integration
-- Health check endpoints
-- Ready for Heroku deployment
+- Framework web FastAPI
+- CORS được kích hoạt để tích hợp frontend
+- Các endpoint kiểm tra sức khỏe
+- Sẵn sàng triển khai Heroku
 
-## Local Development
+## Phát triển cục bộ
 
-1. Install dependencies:
+1. Cài đặt các dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-2. Run the application:
+2. Chạy ứng dụng:
 ```bash
 python main.py
 ```
 
-The API will be available at `http://localhost:8000`
+API sẽ có sẵn tại `http://localhost:8000`
 
 ## API Endpoints
 
-- `GET /` - Welcome message
-- `GET /health` - Health check
+- `GET /` - Thông điệp chào mừng
+- `GET /health` - Kiểm tra sức khỏe
 
-## Interactive API Documentation
+## Tài liệu API tương tác
 
-Once running, visit:
+Khi đã chạy, truy cập:
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
 
-## Heroku Deployment
+## Triển khai Heroku
 
-1. Install Heroku CLI
-2. Login to Heroku: `heroku login`
-3. Create app: `heroku create your-app-name`
-4. Deploy: `git push heroku main`
+1. Cài đặt Heroku CLI
+2. Đăng nhập Heroku: `heroku login`
+3. Tạo ứng dụng: `heroku create ten-ung-dung-cua-ban`
+4. Triển khai: `git push heroku main`
 
-## Environment Variables
+## Biến môi trường
 
-- `PORT` - Server port (automatically set by Heroku)
+- `PORT` - Cổng server (tự động được thiết lập bởi Heroku)
 
-## Project Structure
+## Cấu trúc dự án
 
 ```
 pharmacy-ai/
-├── main.py           # FastAPI application
-├── requirements.txt  # Python dependencies
-├── Procfile         # Heroku process file
-├── runtime.txt      # Python version for Heroku
-└── README.md        # This file
+├── main.py           # Ứng dụng FastAPI
+├── requirements.txt  # Dependencies Python
+├── Procfile         # File quy trình Heroku
+├── runtime.txt      # Phiên bản Python cho Heroku
+└── README.md        # File này
 ```
