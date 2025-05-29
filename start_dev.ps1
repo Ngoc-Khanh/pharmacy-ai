@@ -11,9 +11,9 @@ Write-Host "Installing/updating dependencies..." -ForegroundColor Yellow
 pip install -r requirements.txt
 
 Write-Host ""
-Write-Host "Starting FastAPI server on http://127.0.0.1:8000" -ForegroundColor Green
+Write-Host "Starting FastAPI server on http://127.0.0.1:5000" -ForegroundColor Green
 Write-Host "Press Ctrl+C to stop the server" -ForegroundColor Red
 Write-Host ""
 
 # Khởi động server
-uvicorn main:app --reload --host 127.0.0.1 --port 8000
+uvicorn main:app --reload --host 127.0.0.1 --port 5000

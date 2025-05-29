@@ -11,13 +11,13 @@ from threading import Thread
 def start_server():
     """Khởi động server trong background"""
     try:
-        subprocess.run([sys.executable, "-m", "uvicorn", "main:app", "--host", "127.0.0.1", "--port", "8000"])
+        subprocess.run([sys.executable, "-m", "uvicorn", "main:app", "--host", "127.0.0.1", "--port", "5000"])
     except Exception as e:
         print(f"Lỗi khi khởi động server: {e}")
 
 def test_endpoints():
     """Test các endpoints"""
-    base_url = "http://127.0.0.1:8000"
+    base_url = "http://127.0.0.1:5000"
       # Đợi server khởi động
     print("Đang đợi server khởi động...")
     time.sleep(3)
@@ -37,7 +37,7 @@ def test_endpoints():
         print("\nTất cả endpoints đã được kiểm tra thành công!")
         
     except requests.exceptions.ConnectionError:
-        print("Không thể kết nối đến server. Đảm bảo server đang chạy tại http://127.0.0.1:8000")
+        print("Không thể kết nối đến server. Đảm bảo server đang chạy tại http://127.0.0.1:5000")
     except Exception as e:
         print(f"Lỗi khi kiểm tra endpoints: {e}")
 
