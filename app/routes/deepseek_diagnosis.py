@@ -123,7 +123,7 @@ async def analyze_symptoms_deepseek(input_data: SymptomInput = Body(...)):
     
     # Call DeepSeek API
     stream = client.chat.completions.create(
-      model="deepseek-ai/DeepSeek-R1-0528-Qwen3-8B",
+      model="deepseek-ai/DeepSeek-R1-0528",
       messages=[{"role": "user", "content": prompt}],
       temperature=0.7,
       top_p=0.8,
