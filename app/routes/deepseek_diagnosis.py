@@ -22,7 +22,7 @@ if not API_KEY:
   print("Warning: HUGGING_FACE_API_KEY environment variable not set")
 
 # Create InferenceClient instance
-client = InferenceClient(provider="novita", api_key=API_KEY)
+client = InferenceClient(provider="sambanova", api_key=API_KEY)
 
 # Define models
 class SymptomInput(BaseModel):
@@ -105,7 +105,7 @@ async def analyze_symptoms_deepseek(input_data: SymptomInput = Body(...)):
     - [Thời điểm nên gặp bác sĩ]
     - [Biện pháp phòng ngừa]
     - [Lời khuyên về chế độ sinh hoạt]
-    - [Những điều cần tránh]
+    - [Những điều cần tránh]  
 
     MỨC ĐỘ NGHIÊM TRỌNG:
     [Mức độ nghiêm trọng] - [Giải thích chi tiết về lý do đánh giá và khuyến nghị hành động]
@@ -120,10 +120,9 @@ async def analyze_symptoms_deepseek(input_data: SymptomInput = Body(...)):
     
     logger.info("Calling DeepSeek API...")
     logger.debug(f"Prompt length: {len(prompt)} characters")
-    
     # Call DeepSeek API
     stream = client.chat.completions.create(
-      model="deepseek-ai/DeepSeek-R1-0528",
+      model="meta-llama/Llama-3.1-8B-Instruct",
       messages=[{"role": "user", "content": prompt}],
       temperature=0.7,
       top_p=0.8,
