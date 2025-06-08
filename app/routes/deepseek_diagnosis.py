@@ -122,7 +122,7 @@ async def analyze_symptoms_deepseek(input_data: SymptomInput = Body(...)):
     logger.debug(f"Prompt length: {len(prompt)} characters")
     # Call DeepSeek API
     stream = client.chat.completions.create(
-      model="meta-llama/Llama-3.1-8B-Instruct",
+      model="meta-llama/Llama-3.3-70B-Instruct",
       messages=[{"role": "user", "content": prompt}],
       temperature=0.7,
       top_p=0.8,

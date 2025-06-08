@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from app.routes import router as api_router
+from app.database import connect_to_mongo, close_mongo_connection
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -21,6 +22,17 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Database connection events
+@app.on_event("startup")
+async def startup_event():
+    """Sự kiện khởi động - kết nối MongoDB"""
+    await connect_to_mongo()
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Sự kiện tắt - đóng kết nối MongoDB"""
+    await close_mongo_connection()
 
 # Include API routes
 app.include_router(api_router, prefix="/api")
