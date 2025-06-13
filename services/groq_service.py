@@ -35,7 +35,7 @@ class GroqService:
             self.client = None
             self.model = self.settings.GROQ_MODEL
 
-    async def analyze_symptoms(
+    def analyze_symptoms(
         self, symptoms: str, patient_age: int = None, patient_gender: str = None
     ) -> Tuple[Dict, bool]:
         """
@@ -53,7 +53,8 @@ class GroqService:
             # Tạo seed ngẫu nhiên để đảm bảo phản hồi mới mỗi lần
             random_seed = int(time.time() * 1000) % 10000
             logger.info(f"Using random seed: {random_seed}")
-            response = await self.client.chat.completions.create(
+            
+            response = self.client.chat.completions.create(
                 model=self.model,
                 messages=[
                     {
