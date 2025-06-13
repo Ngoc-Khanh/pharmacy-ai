@@ -13,15 +13,21 @@ class Settings(BaseSettings):
 
     # JWT
     SECRET_KEY: str = "secret"
-    ALGORITHM: str = "HS256"
-
-    # LLM API KEY
+    ALGORITHM: str = "HS256"    # LLM API KEY
     GROQ_API_KEY: Optional[str] = None
-    GROQ_MODEL: str = "qwen-qwq-32b"
+    GROQ_MODEL: str = "qwen-qwq-32b"    # CORS Configuration
+    ENVIRONMENT: str = "development"  # development, production
+    CORS_ORIGINS: str = "*"  # Comma-separated list for production
 
     class Config:
         env_file = ".env"
         from_attributes = True
+
+    def get_cors_origins(self) -> list:
+        """Get CORS origins based on environment"""
+        if self.ENVIRONMENT == "production":
+            return [origin.strip() for origin in self.CORS_ORIGINS.split(",")]
+        return ["*"]  # Allow all origins in development
 
 async def initiate_database():
     settings = Settings()
