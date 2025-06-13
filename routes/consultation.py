@@ -28,7 +28,7 @@ async def create_consultation(consultation_request: ConsultationRequest):
         
         consultation = await db_create_consultation(consultation_request)
         
-        # Convert consultation to dict manually to handle PydanticObjectId
+        # Keep database storage format unchanged for internal use
         consultation_dict = {
             "id": str(consultation.id) if consultation.id else None,
             "user_id": consultation.user_id,
@@ -38,8 +38,19 @@ async def create_consultation(consultation_request: ConsultationRequest):
             "updated_at": consultation.updated_at
         }
         
+        # Create response format matching groq_diagnosis.py structure
+        ai_data = consultation.ai.model_dump()
+        response_data = {
+            "primary_diagnosis": ai_data["primary_diagnosis"],
+            "alternative_diagnoses": ai_data["alternative_diagnoses"],
+            "general_advice": ai_data["general_advice"],
+            "severity_level": ai_data["overall_severity_level"],
+            "related_symptoms": ai_data.get("related_symptoms", []),  # Default to empty list if not present
+            "recommended_actions": ai_data["recommended_actions"]
+        }
+        
         return json(
-            data=consultation_dict,
+            data=response_data,
             message="Phân tích triệu chứng thành công",
             status=201
         )
