@@ -1,5 +1,5 @@
-from ctypes import Union
-from typing import Any, Dict, List, Optional, TypeVar
+from typing import List, Optional, TypeVar, Union
+from fastapi.responses import JSONResponse
 
 T = TypeVar("T")
 
@@ -9,7 +9,7 @@ def json(
     message: str = "Thành công",
     status: int = 200,
     locale: str = "en",
-) -> Dict[str, Any]:
+) -> JSONResponse:
     """
     Tạo response thành công theo định dạng chuẩn
 
@@ -20,15 +20,16 @@ def json(
         locale: Ngôn ngữ
 
     Returns:
-        Dict với định dạng API response chuẩn
+        JSONResponse với status code chính xác
     """
-    return {
+    response_data = {
         "data": data,
         "message": message,
         "status": status,
         "locale": locale,
         "errors": None,
     }
+    return JSONResponse(content=response_data, status_code=status)
 
 
 def fail(
@@ -36,7 +37,7 @@ def fail(
     status: int = 500,
     errors: Optional[List[str]] = None,
     locale: str = "vi",
-) -> Dict[str, Any]:
+) -> JSONResponse:
     """
     Tạo response lỗi theo định dạng chuẩn
 
@@ -47,22 +48,23 @@ def fail(
         locale: Ngôn ngữ
 
     Returns:
-        Dict với định dạng API response lỗi chuẩn
+        JSONResponse với status code lỗi chính xác
     """
-    return {
+    response_data = {
         "data": None,
         "message": message,
         "status": status,
         "locale": locale,
         "errors": errors or message,
     }
+    return JSONResponse(content=response_data, status_code=status)
 
 
 def validataion(
     validation_errors: List[str],
     message: str = "Dữ liệu đầu vào không hợp lệ",
     locale: str = "vi",
-) -> Dict[str, Any]:
+) -> JSONResponse:
     """
     Tạo response lỗi validation
 
@@ -72,18 +74,19 @@ def validataion(
         locale: Ngôn ngữ
 
     Returns:
-        Dict với định dạng API response lỗi validation
+        JSONResponse với status code 400
     """
-    return {
+    response_data = {
         "data": None,
         "message": message,
         "status": 400,
         "locale": locale,
         "errors": "; ".join(validation_errors),
     }
+    return JSONResponse(content=response_data, status_code=400)
 
 
-def not_found(resource: str = "Tài nguyên", locale: str = "vi") -> Dict[str, Any]:
+def not_found(resource: str = "Tài nguyên", locale: str = "vi") -> JSONResponse:
     """
     Tạo response không tìm thấy
 
@@ -92,19 +95,20 @@ def not_found(resource: str = "Tài nguyên", locale: str = "vi") -> Dict[str, A
         locale: Ngôn ngữ
 
     Returns:
-        Dict với định dạng API response 404
+        JSONResponse với status code 404
     """
-    return {
+    response_data = {
         "data": None,
         "message": f"{resource} không được tìm thấy",
         "status": 404,
         "locale": locale,
         "errors": f"{resource} không tồn tại trong hệ thống",
     }
+    return JSONResponse(content=response_data, status_code=404)
 
 def unauthorized(message: str = "Không có quyền truy cập",
     locale: str = "vi"
-) -> Dict[str, Any]:
+) -> JSONResponse:
     """
     Tạo response không có quyền truy cập
 
@@ -113,12 +117,13 @@ def unauthorized(message: str = "Không có quyền truy cập",
         locale: Ngôn ngữ
 
     Returns:
-        Dict với định dạng API response 403
+        JSONResponse với status code 401
     """
-    return {
+    response_data = {
         "data": None,
         "message": message,
         "status": 401,
         "locale": locale,
         "errors": message
     }
+    return JSONResponse(content=response_data, status_code=401)

@@ -17,6 +17,7 @@ class Settings(BaseSettings):
 
     # LLM API KEY
     GROQ_API_KEY: Optional[str] = None
+    GROQ_MODEL: str = "qwen-qwq-32b"
 
     class Config:
         env_file = ".env"
@@ -34,3 +35,8 @@ async def initiate_database():
     await init_beanie(
         database=client[settings.DATABASE_NAME], document_models=models.__all__
     )
+
+def get_database():
+    settings = Settings()
+    client = AsyncIOMotorClient(settings.DATABASE_URL)
+    return client[settings.DATABASE_NAME]

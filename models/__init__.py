@@ -1,4 +1,4 @@
 
-from models.consultation import Consultations
+from models.consultation import Consultation
 
-__all__ = [Consultations]
+__all__ = [Consultation]

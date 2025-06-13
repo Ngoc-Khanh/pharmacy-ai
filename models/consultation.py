@@ -23,7 +23,7 @@ class AIData(BaseModel):
     overall_severity_level: str
     recommended_actions: List[str]
 
-class Consultations(Document):
+class Consultation(Document):
     user_id: str
     human: HumanData
     ai: AIData
@@ -58,5 +58,5 @@ class Consultations(Document):
             }
         }
 
-        class Settings:
-            name = "consultations"
+    class Settings:
+        name = "consultations"
