@@ -10,7 +10,7 @@ consultation_collection = Consultation
 async def create_consultation(consultation_data: ConsultationRequest) -> Consultation:
     """Tạo consultation mới với phân tích AI"""
     groq_service = GroqService()
-    ai_result, is_fallback = await groq_service.analyze_symptoms(
+    ai_result, is_fallback = groq_service.analyze_symptoms(
         symptoms=consultation_data.symptoms,
         patient_age=consultation_data.patient_age,
         patient_gender=consultation_data.patient_gender,
