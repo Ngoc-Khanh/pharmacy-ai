@@ -1,18 +1,19 @@
 from pydantic import BaseModel
-from typing import Optional, Any
+from typing import Optional
 
-class Response(BaseModel):
-    status_code: int
-    response_type: str
-    description: str
-    data: Optional[Any]
+
+class ConsultationRequest(BaseModel):
+    user_id: str
+    symptoms: str
+    patient_age: Optional[int] = None
+    patient_gender: Optional[str] = None
 
     class Config:
         json_schema_extra = {
             "example": {
-                "status_code": 200,
-                "response_type": "success",
-                "description": "Operation successful",
-                "data": "Sample data",
+                "user_id": "112398",
+                "symptoms": "Sốt và ho",
+                "patient_age": 30,
+                "patient_gender": "nam",
             }
         }

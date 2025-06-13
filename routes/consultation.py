@@ -1,17 +1,40 @@
 from fastapi import APIRouter
 
-from database.database import *
-from models.consultation import Consultations
-from schemas.consultation import Response
+from schemas.consultation import ConsultationRequest
+from utils.http_response import json, validataion
+from database.database import create_consultation as db_create_consultation
 
 router = APIRouter()
 
-@router.get("/", response_description="Consultations retrieved", response_model=Response)
-async def get_consultations():
-    consultations = await retrieve_consultations()
-    return {
-        "status_code": 200,
-        "response_type": "success",
-        "description": "Consultations data retrieved successfully",
-        "data": consultations,
-    }
+
+@router.post("/diagnose", response_description="Consultation created")
+async def create_consultation(consultation_request: ConsultationRequest):
+    """
+    Tạo consultation mới với phân tích AI từ triệu chứng
+    """
+    try:
+        # Validate input
+        if not consultation_request.symptoms.strip():
+            return validataion(
+                validation_errors=["Triệu chứng không được để trống"],
+                message="Dữ liệu đầu vào không hợp lệ"
+            )
+        
+        if consultation_request.patient_age and (consultation_request.patient_age < 0 or consultation_request.patient_age > 150):
+            return validataion(
+                validation_errors=["Tuổi phải từ 0 đến 150"],
+                message="Dữ liệu đầu vào không hợp lệ"
+            )
+        
+        consultation = await db_create_consultation(consultation_request)
+        return json(
+            data=consultation.model_dump(),
+            message="Phân tích triệu chứng thành công",
+            status=201
+        )
+    except Exception as e:
+        print(f"Error creating consultation: {e}")
+        return validataion(
+            validation_errors=[f"Lỗi khi tạo consultation: {str(e)}"],
+            message="Đã xảy ra lỗi trong quá trình xử lý"
+        )
