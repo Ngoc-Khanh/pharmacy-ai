@@ -1,13 +1,23 @@
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 
 from auth.jwt_bearer import JWTBearer
-from config.config import get_database, initiate_database
+from config.config import get_database, initiate_database, Settings
 from routes import router as api_router
 from utils.http_response import fail, json
 
 app = FastAPI()
 
 token_listener = JWTBearer()
+settings = Settings()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.get_cors_origins(),
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.on_event("startup")
