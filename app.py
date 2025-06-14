@@ -1,3 +1,4 @@
+import logging
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 
@@ -5,6 +6,15 @@ from auth.jwt_bearer import JWTBearer
 from config.config import get_database, initiate_database, Settings
 from routes import router as api_router
 from utils.http_response import fail, json
+
+# Cấu hình logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(),  # Log ra console
+    ]
+)
 
 app = FastAPI()
 

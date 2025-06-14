@@ -1,11 +1,14 @@
 from datetime import datetime
 
+from fastapi import HTTPException
+
 from models.consultation import AIData, Consultation, HumanData
+from models.medicine import Medicine
 from schemas.consultation import ConsultationRequest
 from services.groq_service import GroqService
 
 consultation_collection = Consultation
-
+medicine_collection = Medicine
 
 async def create_consultation(consultation_data: ConsultationRequest) -> Consultation:
     """Tạo consultation mới với phân tích AI"""
@@ -30,3 +33,9 @@ async def create_consultation(consultation_data: ConsultationRequest) -> Consult
     )
     await consultation.create()
     return consultation
+
+async def get_medicine_by_id(medicine_id: str) -> Medicine:
+    medicine = await medicine_collection.find_one(Medicine.id == medicine_id)
+    if not medicine:
+        raise HTTPException(status_code=404, detail="Medicine not found")
+    return medicine

@@ -1,8 +1,9 @@
 from typing import List, Optional, Union
+from uuid import UUID, uuid4
 from datetime import datetime
 
-from beanie import Document, PydanticObjectId
-from pydantic import BaseModel, Field, validator
+from beanie import Document
+from pydantic import BaseModel, Field
 
 
 class Thumbnail(BaseModel):
@@ -13,10 +14,10 @@ class Thumbnail(BaseModel):
 
 class Variants(BaseModel):
     price: int
-    quantity: Optional[int] = None
+    quantity: int
     limit_quantity: int
     stock_status: str
-    original_price: int
+    original_price: float
     discount_percent: int
     is_featured: bool
     is_active: bool
@@ -28,7 +29,7 @@ class Ratings(BaseModel):
     review_count: int
 
 
-class Parameters(BaseModel):
+class Paramaters(BaseModel):
     origin: str
     packaging: str
 
@@ -36,7 +37,7 @@ class Parameters(BaseModel):
 class Details(BaseModel):
     ingredients: str
     usage: List[str]
-    paramaters: Parameters
+    paramaters: Paramaters
 
 
 class Dosage(BaseModel):
@@ -44,14 +45,14 @@ class Dosage(BaseModel):
     child: str
 
 
-class Usageguide(BaseModel):
+class UsageGuide(BaseModel):
     dosage: Dosage
     directions: List[str]
     precautions: List[str]
 
 
 class Medicine(Document):
-    id: Optional[Union[PydanticObjectId, str]] = Field(default=None, alias="_id")
+    id: UUID = Field(default_factory=uuid4, alias="_id")
     category_id: str
     supplier_id: str
     name: str
@@ -61,28 +62,9 @@ class Medicine(Document):
     variants: Variants
     ratings: Ratings
     details: Details
-    usageguide: Usageguide
-    created_at: Optional[Union[datetime, str]] = None
-    updated_at: Optional[Union[datetime, str]] = None
-
-    @validator('id', pre=True)
-    def validate_id(cls, v):
-        if v is None:
-            return v
-        if isinstance(v, str):
-            # If it's a string UUID, keep it as string
-            return v
-        return v
-
-    @validator('created_at', 'updated_at', pre=True)
-    def validate_datetime(cls, v):
-        if v is None:
-            return v
-        if isinstance(v, datetime):
-            return v
-        if isinstance(v, str):
-            return v
-        return str(v)
+    usageguide: UsageGuide
+    created_at: Optional[Union[str, datetime]] = None
+    updated_at: Optional[Union[str, datetime]] = None
 
     class Settings:
         name = "medicines"
