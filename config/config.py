@@ -13,9 +13,23 @@ class Settings(BaseSettings):
 
     # JWT
     SECRET_KEY: str = "secret"
-    ALGORITHM: str = "HS256"    # LLM API KEY
+    ALGORITHM: str = "HS256"
+
+    # LLM API KEY
     GROQ_API_KEY: Optional[str] = None
-    GROQ_MODEL: str = "qwen-qwq-32b"    # CORS Configuration
+    GROQ_MODEL: str = "qwen-qwq-32b"
+    COHERE_API_KEY: Optional[str] = None
+    COHERE_EMBEDDING_MODEL: str = "embed-multilingual-v3.0"
+    
+    # Milvus configurations
+    MILVUS_URI: Optional[str] = None
+    MILVUS_TOKEN: Optional[str] = None
+    MILVUS_COLLECTION_NAME: str = "medicine_embeddings"
+    
+    # Embedding configurations
+    EMBEDDING_DIMENSION: int = 1024
+
+    # CORS Configuration
     ENVIRONMENT: str = "development"  # development, production
     CORS_ORIGINS: str = "*"  # Comma-separated list for production
 
@@ -29,10 +43,11 @@ class Settings(BaseSettings):
             return [origin.strip() for origin in self.CORS_ORIGINS.split(",")]
         return ["*"]  # Allow all origins in development
 
+
 async def initiate_database():
     settings = Settings()
     client = AsyncIOMotorClient(settings.DATABASE_URL)
-    try: 
+    try:
         await client.admin.command("ping")
         print("MongoDB connection successful")
     except Exception as e:
@@ -41,6 +56,7 @@ async def initiate_database():
     await init_beanie(
         database=client[settings.DATABASE_NAME], document_models=models.__all__
     )
+
 
 def get_database():
     settings = Settings()
