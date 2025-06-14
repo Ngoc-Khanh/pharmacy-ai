@@ -43,10 +43,11 @@ class Settings(BaseSettings):
             return [origin.strip() for origin in self.CORS_ORIGINS.split(",")]
         return ["*"]  # Allow all origins in development
 
+
 async def initiate_database():
     settings = Settings()
     client = AsyncIOMotorClient(settings.DATABASE_URL)
-    try: 
+    try:
         await client.admin.command("ping")
         print("MongoDB connection successful")
     except Exception as e:
@@ -55,6 +56,7 @@ async def initiate_database():
     await init_beanie(
         database=client[settings.DATABASE_NAME], document_models=models.__all__
     )
+
 
 def get_database():
     settings = Settings()
