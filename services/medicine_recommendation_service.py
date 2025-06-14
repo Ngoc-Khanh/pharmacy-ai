@@ -1,11 +1,32 @@
 import logging
 from typing import Any, Dict, List
+from datetime import datetime
 
+from beanie import PydanticObjectId
 from models.medicine import Medicine
 from services.embedding_service import EmbeddingService
 from services.milvus_service import MilvusService
 
 logger = logging.getLogger(__name__)
+
+
+def serialize_medicine_data(medicine_data):
+    """
+    Custom serializer to handle datetime and other non-JSON serializable objects
+    """
+    def convert_value(obj):
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        elif isinstance(obj, PydanticObjectId):
+            return str(obj)
+        elif isinstance(obj, dict):
+            return {k: convert_value(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [convert_value(item) for item in obj]
+        else:
+            return obj
+    
+    return convert_value(medicine_data)
 
 
 class MedicineRecommendationService:
@@ -54,12 +75,49 @@ class MedicineRecommendationService:
     ) -> List[Dict[str, Any]]:
         """Tìm thuốc tương tự dựa trên medicine_id"""
         try:
-            # Lấy thông tin thuốc từ MongoDB
-            medicine = await Medicine.get(medicine_id)
+            # Lấy thông tin thuốc từ MongoDB với multiple strategies
+            medicine = None
+            
+            # Strategy 1: Query by _id directly using get()
+            try:
+                medicine = await Medicine.get(medicine_id)
+                if medicine:
+                    logger.info(f"Found medicine using Strategy 1 (get): {medicine_id}")
+            except Exception as e:
+                logger.debug(f"Strategy 1 failed for {medicine_id}: {e}")
+            
+            # Strategy 2: Query by id field (not _id)
+            if not medicine:
+                try:
+                    medicine = await Medicine.find_one(Medicine.id == medicine_id)
+                    if medicine:
+                        logger.info(f"Found medicine using Strategy 2 (id field): {medicine_id}")
+                except Exception as e:
+                    logger.debug(f"Strategy 2 failed for {medicine_id}: {e}")
+            
+            # Strategy 3: Query using find with filter
+            if not medicine:
+                try:
+                    medicine = await Medicine.find_one({"$or": [
+                        {"_id": medicine_id},
+                        {"id": medicine_id}
+                    ]})
+                    if medicine:
+                        logger.info(f"Found medicine using Strategy 3 (filter): {medicine_id}")
+                except Exception as e:
+                    logger.debug(f"Strategy 3 failed for {medicine_id}: {e}")
+            
             if not medicine:
                 raise ValueError(f"Medicine not found: {medicine_id}")
+            
             # Tạo text và embedding
-            medicine_dict = medicine.dict()
+            try:
+                medicine_dict = medicine.model_dump()
+            except AttributeError:
+                medicine_dict = medicine.dict()
+            
+            # Serialize datetime and other objects
+            medicine_dict = serialize_medicine_data(medicine_dict)
             texts = self.embedding_service.create_medicine_text_for_embedding(
                 medicine_dict
             )
