@@ -79,58 +79,6 @@ python main.py
 docker-compose up -d
 ```
 
-## Đồng Bộ Dữ Liệu với Milvus
-
-Dự án bao gồm các script để đồng bộ dữ liệu Medicine từ MongoDB lên Milvus vector database để hỗ trợ tìm kiếm thông minh.
-
-### Cấu Hình Environment Variables
-
-Thêm các biến sau vào file `.env`:
-
-```env
-# Cohere API (để tạo embeddings)
-COHERE_API_KEY=your_cohere_api_key_here
-COHERE_EMBEDDING_MODEL=embed-multilingual-v3.0
-
-# Milvus Cloud
-MILVUS_URI=your_milvus_cloud_uri
-MILVUS_TOKEN=your_milvus_cloud_token
-MILVUS_COLLECTION_NAME=medicine_embeddings
-
-# Embedding Configuration
-EMBEDDING_DIMENSION=1024
-```
-
-### Sử Dụng Scripts
-
-1. **Kiểm tra cấu hình trước khi sync:**
-```console
-python scripts/check_config.py
-```
-
-2. **Đồng bộ dữ liệu:**
-```console
-# Cách đơn giản
-python scripts/run_sync.py
-
-# Hoặc chạy script chính
-python scripts/sync_medicines_to_milvus.py
-```
-
-3. **Các tùy chọn nâng cao:**
-```console
-# Chỉ kiểm tra kết quả
-python scripts/run_sync.py --verify-only
-
-# Tùy chỉnh batch size
-python scripts/run_sync.py --batch-size 20
-
-# Tạo lại collection
-python scripts/run_sync.py --recreate-collection
-```
-
-Xem thêm chi tiết trong [scripts/README.md](scripts/README.md).
-
 ## Bản Quyền
 
 Dự án này được cấp phép theo giấy phép MIT.
