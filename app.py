@@ -58,7 +58,7 @@ async def health_check():
     """Endpoint kiểm tra sức khỏe chi tiết với standardized response"""
     try:
         db = get_database()
-        db_status = "connected" if db else "disconnected"
+        db_status = "connected" if db is not None else "disconnected"
 
         health_data = {
             "service": "pharmacy-ai-backend",
