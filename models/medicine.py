@@ -14,13 +14,13 @@ class Thumbnail(BaseModel):
 
 class Variants(BaseModel):
     price: int
-    quantity: int
-    limit_quantity: int
+    quantity: Optional[int] = None  # Cho phép thiếu field này
+    limit_quantity: Optional[int] = None
     stock_status: str
-    original_price: float
-    discount_percent: int
-    is_featured: bool
-    is_active: bool
+    original_price: Optional[float] = None
+    discount_percent: Optional[int] = None
+    is_featured: bool = False
+    is_active: bool = True
 
 
 class Ratings(BaseModel):

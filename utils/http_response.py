@@ -60,7 +60,7 @@ def fail(
     return JSONResponse(content=response_data, status_code=status)
 
 
-def validataion(
+def validation(
     validation_errors: List[str],
     message: str = "Dữ liệu đầu vào không hợp lệ",
     locale: str = "vi",

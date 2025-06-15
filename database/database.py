@@ -10,6 +10,7 @@ from services.groq_service import GroqService
 consultation_collection = Consultation
 medicine_collection = Medicine
 
+
 async def create_consultation(consultation_data: ConsultationRequest) -> Consultation:
     """Tạo consultation mới với phân tích AI"""
     groq_service = GroqService()
@@ -34,8 +35,17 @@ async def create_consultation(consultation_data: ConsultationRequest) -> Consult
     await consultation.create()
     return consultation
 
+
 async def get_medicine_by_id(medicine_id: str) -> Medicine:
     medicine = await medicine_collection.find_one(Medicine.id == medicine_id)
     if not medicine:
         raise HTTPException(status_code=404, detail="Medicine not found")
     return medicine
+
+
+async def get_consultation_by_id(consultation_id: str) -> Consultation:
+    """Lấy consultation theo ID"""
+    consultation = await consultation_collection.find_one(Consultation.id == consultation_id)
+    if not consultation:
+        raise HTTPException(status_code=404, detail="Consultation not found")
+    return consultation

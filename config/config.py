@@ -20,12 +20,12 @@ class Settings(BaseSettings):
     GROQ_MODEL: str = "qwen-qwq-32b"
     COHERE_API_KEY: Optional[str] = None
     COHERE_EMBEDDING_MODEL: str = "embed-multilingual-v3.0"
-    
+
     # Milvus configurations
     MILVUS_URI: Optional[str] = None
     MILVUS_TOKEN: Optional[str] = None
     MILVUS_COLLECTION_NAME: str = "medicine_embeddings"
-    
+
     # Embedding configurations
     EMBEDDING_DIMENSION: int = 1024
 
