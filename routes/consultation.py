@@ -35,6 +35,7 @@ async def create_consultation(consultation_request: ConsultationRequest):
         # Create response format matching groq_diagnosis.py structure
         ai_data = consultation.ai.model_dump()
         response_data = {
+            "consultation_id": str(consultation.id),  # Thêm ID của consultation
             "primary_diagnosis": ai_data["primary_diagnosis"],
             "alternative_diagnoses": ai_data["alternative_diagnoses"],
             "general_advice": ai_data["general_advice"],
