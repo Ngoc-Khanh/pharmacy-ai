@@ -130,6 +130,34 @@ class EmbeddingService:
             logger.error(f"Lỗi khi kiểm tra embedding: {e}")
             return {"exists": False, "error": str(e)}
 
+    def delete_medicine_embedding(self, medicine_id: str) -> bool:
+        """Xóa embedding của thuốc khỏi Milvus"""
+        try:
+            if not self.milvus_collection:
+                logger.error("Collection Milvus chưa được khởi tạo")
+                return False
+            # Load collection để thực hiện delete
+            self.milvus_collection.load()
+            # Kiểm tra xem thuốc có tồn tại trong vector database không
+            search_results = self.milvus_collection.query(
+                expr=f'medicine_id == "{medicine_id}"',
+                output_fields=["id", "medicine_id", "name"]
+            )
+            if not search_results:
+                logger.warning(f"Không tìm thấy embedding cho thuốc ID: {medicine_id}")
+                return False
+            # Thực hiện xóa dựa trên medicine_id
+            delete_result = self.milvus_collection.delete(
+                expr=f'medicine_id == "{medicine_id}"'
+            )
+            # Flush để đảm bảo việc xóa được commit
+            self.milvus_collection.flush()
+            logger.info(f"Đã xóa embedding cho thuốc ID: {medicine_id}")
+            return True
+        except Exception as e:
+            logger.error(f"Lỗi khi xóa embedding: {e}")
+            return False
+
     def create_medicine_embedding_text(self, medicine_data: Dict[str, Any]) -> str:
         """Tạo text để embedding từ dữ liệu thuốc"""
         try:
@@ -176,6 +204,7 @@ class EmbeddingService:
                 + ". "
                 + medicine_data.get("description", "")
             )
+            
 
     def generate_embedding(self, text: str) -> Optional[List[float]]:
         """Tạo embedding từ text sử dụng Cohere"""
