@@ -53,7 +53,7 @@ async def get_embedding_status(medicine_id: str):
             message="Đã xảy ra lỗi trong quá trình xử lý",
         )
 
-@router.post("/embed-medicine/{medicine_id}", response_description="Medicine embedded to vector database")
+@router.post("/{medicine_id}/embed-medicine", response_description="Medicine embedded to vector database")
 async def embed_medicine_by_id(medicine_id: str):
     """
     Nhận ID thuốc từ Laravel, lấy dữ liệu từ MongoDB và embedding lên vector database
@@ -85,7 +85,7 @@ async def embed_medicine_by_id(medicine_id: str):
         embedding_service = EmbeddingService()
         # Kiểm tra xem thuốc đã được embedding chưa
         existing_results = embedding_service.search_similar_medicines(
-            medicine_doc["name", ""], limit=1
+            medicine_doc.get("name", ""), limit=1
         )
         # Nếu đã tồn tại (similarity score rất cao), cập nhập
         should_update = False
@@ -125,4 +125,51 @@ async def embed_medicine_by_id(medicine_id: str):
             message="Đã xảy ra lỗi trong quá trình xử lý",
         )
 
-# @router.delete("/delete-medicine/{medicine_id}", response_description="Delete medicine from vector database")
+@router.delete("/{medicine_id}/delete-medicine", response_description="Delete medicine from vector database")
+async def delete_medicine_embedding(medicine_id: str):
+    """
+    Xóa embedding của thuốc khỏi vector database
+    """
+    try:
+        # Validate UUID format
+        try:
+            UUID(medicine_id)
+        except ValueError:
+            return validation(
+                validation_errors=["ID thuốc không đúng định dạng UUID"],
+                message="Dữ liệu đầu vào không hợp lệ",
+            )
+        # Khởi tạo embedding service
+        embedding_service = EmbeddingService()
+        # Kiểm tra xem embedding có tồn tại không
+        check_result = embedding_service.check_medicine_embedding_exists(medicine_id)
+        if not check_result.get("exists", False):
+            return validation(
+                validation_errors=["Không tìm thấy embedding cho thuốc này"],
+                message="Embedding không tồn tại trong vector database",
+            )
+        # Thực hiện xóa embedding
+        success = embedding_service.delete_medicine_embedding(medicine_id)
+        if success:
+            response_data = {
+                "medicine_id": medicine_id,
+                "medicine_name": check_result.get("name", ""),
+                "action": "deleted",
+                "status": "success"
+            }
+            return json(
+                data=response_data,
+                message="Xóa embedding thuốc thành công",
+                status=200
+            )
+        else:
+            return validation(
+                validation_errors=["Không thể xóa embedding"],
+                message="Lỗi khi xóa embedding khỏi vector database",
+            )
+    except Exception as e:
+        print(f"Error deleting medicine embedding {medicine_id}: {e}")
+        return validation(
+            validation_errors=[f"Lỗi khi xóa embedding: {str(e)}"],
+            message="Đã xảy ra lỗi trong quá trình xử lý",
+        )
