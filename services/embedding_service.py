@@ -101,6 +101,34 @@ class EmbeddingService:
             logger.info(f"Tạo collection {collection_name} thành công!")
         except Exception as e:
             logger.error(f"Lỗi khi tạo collection: {e}")
+            
+    def check_medicine_embedding_exists(self, medicine_id: str) -> Dict[str, Any]:
+        """Kiểm tra xem embedding của thuốc có tồn tại không"""
+        try:
+            if not self.milvus_collection:
+                logger.error("Collection Milvus chưa được khởi tạo")
+                return {"exists": False, "error": "Collection không khả dụng"}
+            # Load collection
+            self.milvus_collection.load()
+            # Query để tìm thuốc
+            search_results = self.milvus_collection.query(
+                expr=f'medicine_id == "{medicine_id}"',
+                output_fields=["id", "medicine_id", "name", "description"]
+            )
+            if search_results:
+                result = search_results[0] # Lấy kết quả đầu tiên
+                return {
+                    "exists": True,
+                    "medicine_id": result.get("medicine_id"),
+                    "name": result.get("name"),
+                    "description": result.get("description"),
+                    "vector_id": result.get("id")
+                }
+            else:
+                return {"exists": False, "error": "Không tìm thấy embedding"}
+        except Exception as e:
+            logger.error(f"Lỗi khi kiểm tra embedding: {e}")
+            return {"exists": False, "error": str(e)}
 
     def create_medicine_embedding_text(self, medicine_data: Dict[str, Any]) -> str:
         """Tạo text để embedding từ dữ liệu thuốc"""
