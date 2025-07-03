@@ -77,8 +77,8 @@ async def recommend_medicines_for_consultation(consultation_id: str, limit: int 
         query_parts = []
         # Thêm chẩn đoán chính
         primary_diagnosis = ai_data.primary_diagnosis
-        query_parts.append(f"Chẩn đoán: {primary_diagnosis.diagnosis_name}")
-        query_parts.append(f"Mô tả: {primary_diagnosis.description}")
+        query_parts.append(f"Điều trị {primary_diagnosis.diagnosis_name}")
+        query_parts.append(f"Chữa {primary_diagnosis.diagnosis_name}")
         # Thêm triệu chứng
         query_parts.append(f"Triệu chứng: {consultation.human.symptoms}")
         # Thêm triệu chứng liên quan
@@ -86,8 +86,8 @@ async def recommend_medicines_for_consultation(consultation_id: str, limit: int 
             query_parts.append(f"Triệu chứng liên quan: {', '.join(ai_data.related_symptoms)}")
         # Thêm chẩn đoán thay thế
         if ai_data.alternative_diagnoses:
-            alt_diagnoses = [diag.diagnosis_name for diag in ai_data.alternative_diagnoses]
-            query_parts.append(f"Chẩn đoán thay thế: {', '.join(alt_diagnoses)}")
+            alt_diagnoses = [diag.diagnosis_name for diag in ai_data.alternative_diagnoses[:2]]  # Chỉ lấy 2 cái đầu
+            query_parts.append(f"có thể điều trị {', '.join(alt_diagnoses)}")
         # Tạo query text hoàn chỉnh
         query_text = ". ".join(query_parts)
         # Khởi tạo embedding service và tìm kiếm thuốc

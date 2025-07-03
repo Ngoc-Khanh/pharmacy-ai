@@ -161,7 +161,7 @@ class EmbeddingService:
     def create_medicine_embedding_text(self, medicine_data: Dict[str, Any]) -> str:
         """Tạo text để embedding từ dữ liệu thuốc"""
         try:
-            text_parts = []  # Tạo danh sách để lưu các phần của text
+            text_parts = []
             # Thông tin cơ bản
             text_parts.append(f"Tên thuốc: {medicine_data.get('name', '')}")
             text_parts.append(f"Mô tả: {medicine_data.get('description', '')}")
@@ -171,16 +171,18 @@ class EmbeddingService:
                 if "ingredients" in details:
                     text_parts.append(f"Thành phần: {details['ingredients']}")
                 if "usage" in details and isinstance(details["usage"], list):
-                    text_parts.append(f"Công dụng: {', '.join(details['usage'])}")
-                if "paramaters" in details:  # Note: typo in original data
-                    params = details["paramaters"]
-                    if "origin" in params:
-                        text_parts.append(f"Xuất xứ: {params['origin']}")
-                    if "packaging" in params:
-                        text_parts.append(f"Đóng gói: {params['packaging']}")
-            # Hướng dẫn sử dụng
+                    # Cải thiện: Thêm chi tiết hơn về công dụng chữa trị
+                    usage_text = ', '.join(details['usage'])
+                    text_parts.append(f"Công dụng: {usage_text}")
+                    text_parts.append(f"Chỉ định: {usage_text}")  # Thêm từ khóa "chỉ định"
+                    text_parts.append(f"Điều trị: {usage_text}")  # Thêm từ khóa "điều trị"
+            # Hướng dẫn sử dụng với thông tin bệnh trạng
             if "usageguide" in medicine_data:
                 guide = medicine_data["usageguide"]
+                if "indications" in guide:  # Nếu có thông tin về chỉ định
+                    text_parts.append(f"Chỉ định sử dụng: {guide['indications']}")
+                if "contraindications" in guide:  # Chống chỉ định
+                    text_parts.append(f"Chống chỉ định: {guide['contraindications']}")
                 if "dosage" in guide:
                     dosage = guide["dosage"]
                     if "adult" in dosage:
@@ -191,10 +193,9 @@ class EmbeddingService:
                     text_parts.append(f"Cách dùng: {', '.join(guide['directions'])}")
                 if "precautions" in guide and isinstance(guide["precautions"], list):
                     text_parts.append(f"Lưu ý: {', '.join(guide['precautions'])}")
-            # Thông tin giá và tình trạng
+            # Thông tin giá và tình trạng (ít quan trọng cho tìm kiếm theo chẩn đoán)
             if "variants" in medicine_data:
                 variants = medicine_data["variants"]
-                text_parts.append(f"Giá: {variants.get('price', 0)} VND")
                 text_parts.append(f"Tình trạng: {variants.get('stock_status', '')}")
             return ". ".join(text_parts)
         except Exception as e:
@@ -204,9 +205,8 @@ class EmbeddingService:
                 + ". "
                 + medicine_data.get("description", "")
             )
-            
 
-    def generate_embedding(self, text: str) -> Optional[List[float]]:
+    def generate_embedding(self, text: str, input_type: str = "search_document") -> Optional[List[float]]:
         """Tạo embedding từ text sử dụng Cohere"""
         try:
             if not self.cohere_client:
@@ -215,7 +215,7 @@ class EmbeddingService:
             response = self.cohere_client.embed(
                 texts=[text],
                 model=self.settings.COHERE_EMBEDDING_MODEL,
-                input_type="search_document",
+                input_type=input_type,
                 embedding_types=["float"],
                 output_dimension=self.settings.EMBEDDING_DIMENSION,
             )
@@ -292,7 +292,7 @@ class EmbeddingService:
             # Load collection
             self.milvus_collection.load()
             # Tạo embedding cho query
-            query_embedding = self.generate_embedding(query_text)
+            query_embedding = self.generate_embedding(query_text, input_type="search_query")
             if not query_embedding:
                 return []
             # Search parameters
@@ -307,8 +307,10 @@ class EmbeddingService:
                 limit=limit,
                 output_fields=[
                     "medicine_id",
-                    "name",
+                    "name", 
                     "description",
+                    "ingredients",
+                    "usage",
                     "price",
                     "rating_star",
                     "stock_status",
@@ -323,13 +325,14 @@ class EmbeddingService:
                             "medicine_id": hit.entity.get("medicine_id"),
                             "name": hit.entity.get("name"),
                             "description": hit.entity.get("description"),
+                            "ingredients": hit.entity.get("ingredients"),
+                            "usage": hit.entity.get("usage"),
                             "price": hit.entity.get("price"),
                             "rating_star": hit.entity.get("rating_star"),
                             "stock_status": hit.entity.get("stock_status"),
                             "similarity_score": hit.score,
                         }
                     )
-
             return formatted_results
         except Exception as e:
             logger.error(f"Lỗi khi tìm kiếm: {e}")
