@@ -144,7 +144,7 @@ class GroqService:
         }}
         
         LƯU Ý QUAN TRỌNG:
-        - Mỗi câu trả lời hoàn toàn bằng TIẾNG VIỆT không có tiếng Anh hay tiếng Trung
+        - Mỗi câu trả lời hoàn toàn bằng TIẾNG VIỆT không có TIẾNG ANH hay TIẾNG TRUNG QUỐC
         - Mỗi mô tả phải chi tiết, không được chung chung
         - Lý do phải giải thích rõ ràng cơ chế, không chỉ liệt kê
         - Lời khuyên phải thực tế, có thể áp dụng được
